@@ -3,12 +3,17 @@ project:
   output-dir: docs
 
 website:
-  title: "stripcropping_test"
-  navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+  
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - section: "Robotic Strip Cropping"
+        contents:
+          - index.qmd
+      - section: "Biodiversity"
+        contents:
+          - biodiversity.qmd
 
 format:
   html:

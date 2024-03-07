@@ -1,11 +1,32 @@
 ---
-title: "stripcropping_test"
+title: "Robotic Strip Cropping"
+subtitle: "Project Overview"
+title-block-banner: "#012169"
+toc: true
+toc-location: right
+toc-title: "On this page:"
 ---
 
-This is a Quarto website.
+# **Robotic Strip Cropping Project**
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+**ARRevolution / NP Holloway & Son / Harper Adams University - 2023 - 2025**
 
-```{r}
-1 + 1
-```
+This project builds on the successful IUK Funded Research Starter Pilot project 'Robotic Arable Polyculture Farming' (RAPF) and aims to test the feasibility of an innovative autonomous robot and toolset capable of farming broadacre arable crops in a polyculture strip cropping system (PSCS) by conducting a field trial. This is driven by the need for environmental sustainability and resilience, along with regenerating biodiversity and our soils. 
+
+Monocultures exacerbate abiotic stresses such as soil compaction from heavy machines, poor soil structure and degraded soils. Monocultures also exacerbate biotic stresses such as disease, pests, and weeds, increasing the use of agrochemicals. 
+
+Farming polycultures with lightweight machines can alleviate these issues but the lack of specific crop science knowledge and machinery available is severely limiting their potential. 
+
+This Robotic Strip Cropping consortium consists of the lead organisation ARRevolution Ltd (ARR) collaborating with Harper Adams University (HAU) and NP Holloway & Son (NPH). H&J Arnold (HJA) are subcontractors. 
+
+This Robotic Strip Cropping project will involve a biodiversity audit to generate a baseline of the trial site and design of a PSCS field trial.
+
+# **Public Summary**
+
+This project builds on the Innovate UK Funded Farming Innovation Pathways Research Starter Pilot project 'Robotic Arable Polyculture Farming' and aims to test the feasibility of an innovative autonomous robot and toolset capable of farming broadacre arable crops in a polyculture strip cropping system. This is driven by the need for environmental sustainability and resilience, along with regenerating biodiversity and our soils. 
+
+Current arable farming practice in England (and much of the world) is heavily reliant on monocultures, to grow crops as time efficiently as possible. For many years this has provided ever increasing crop yields, spurred on by agrochemicals and ever larger machinery, but the yields have plateaued and the detriment of monocultures to our environment and soils is more evident than ever. 
+
+The proposed polyculture strip cropping system can alleviate all the issues associated with monocultures while decreasing fertiliser and agrochemical usage, regenerating biodiversity, regenerating our soils, and increasing yield. 
+
+[![Link to ARRevolution website](_assets/arr.png){fig-align="center"}](https://arrevolution.co.uk/)

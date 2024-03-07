@@ -1,0 +1,161 @@
+---
+title: "Biodiversity"
+subtitle: "Site Map and Sampling"
+title-block-banner: "#012169"
+toc: true
+toc-location: right
+toc-title: "On this page:"
+css: styles.css
+---
+
+# Biodiversity
+
+This Robotic Strip Cropping project will involve a biodiversity audit to generate a baseline of the trial site and design of a PSCS field trial. HAU will monitor the trial for disease, pests, weeds, biodiversity, nutrient and light use efficiency, and will analyse the resulting yields.
+
+The objective of the biodiversity audit is to utilise standard pitfall trapping for ground invertebrates and yellow sticky traps for flying invertebrate. The sampling sites will be selected from coordinates generated from a hexagonal grid overlay that mimics that used by the [Soyl](https://www.soyl.com/) software currently employed by NP Holloway and Son to deliver abiotic and canopy health data for their fields.
+
+Collected invertebrate data can then be compared between the strip cropping site and an adjacent conventionally farmed field, and measured against collected soil and crop data obtained through the Soyl software. Further comparisons may be made between invertebrate groups and guilds and correlated with strip locations to identify impacts of the system and any edge effects.
+
+# Site Map and Sampling Points
+
+```{r, echo=FALSE, include=FALSE}
+# Install and load required libraries
+packages <- c("leaflet", "sp", "sf", "readr", "tidyverse", "ggspatial", "leaflet.extras", "leaflet.providers", "htmlwidgets")
+new_packages <- packages[!(packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+lapply(packages, library, character.only = TRUE)
+```
+
+```{r, echo=FALSE, include=FALSE}
+#libraries 
+
+##
+# 02. Load data
+##
+
+polygons <- st_read("assets/layer.kml", layer = "Autonomous Strip Cropping Site")
+
+##
+# 03. Sort polygons and check validity
+##
+
+v_check <- st_is_valid(polygons, reason = TRUE)
+print(v_check)
+
+v_polygon <- st_make_valid(polygons)
+all_valid <- all(st_is_valid(v_polygon))
+print(all_valid)
+
+# Extract the two fields from the polygons, make valid
+
+field_1 <- v_polygon[v_polygon$Name == "Field_1", ]
+
+field_1 <- st_make_valid(field_1)
+
+field_2 <- v_polygon[v_polygon$Name == "Field_2", ]
+
+field_2 <- st_make_valid(field_2)
+
+# Transform field_1 & field_2 to British National Grid (EPSG:27700)
+field_1_bng <- st_transform(field_1, crs = 27700)
+
+field_2_bng <- st_transform(field_2, crs = 27700)
+
+##
+# 04. Create grid overlay
+##
+
+# Create a hexagonal grid within Field_1 & Field_2
+# The cellsize argument defines the distance between opposite edges of the hexagons
+hex_grid <- st_make_grid(field_1_bng, cellsize = c(15, 15), square = FALSE)
+hex_grid_sf <- st_sf(geometry = hex_grid)
+hex_grid_intersected <- st_intersection(hex_grid_sf, field_1_bng)
+
+hex_grid_2 <- st_make_grid(field_2_bng, cellsize = c(15, 15), square = FALSE)
+hex_grid_sf_2 <- st_sf(geometry = hex_grid_2)
+hex_grid_intersected_2 <- st_intersection(hex_grid_sf_2, field_2_bng)
+
+# Calculate the centroids of the hexagonal grid cells
+hex_grid_centers <- st_centroid(hex_grid_intersected)
+hex_grid_centers_2 <- st_centroid(hex_grid_intersected_2)
+
+# Transform the centroids back to WGS 84 (EPSG:4326) for lat/long readings, create a dataframe
+hex_grid_centers_wgs84 <- st_transform(hex_grid_centers, crs = 4326)
+hex_grid_centers_wgs84_2 <- st_transform(hex_grid_centers_2, crs = 4326)
+
+hex_coords_df <- data.frame(
+  longitude = st_coordinates(hex_grid_centers_wgs84)[, 1],
+  latitude = st_coordinates(hex_grid_centers_wgs84)[, 2]
+)
+
+hex_coords_df_2 <- data.frame(
+  longitude = st_coordinates(hex_grid_centers_wgs84_2)[, 1],
+  latitude = st_coordinates(hex_grid_centers_wgs84_2)[, 2]
+)
+
+# Filter out non-polygon geometries
+hex_grid_intersected_polygons <- hex_grid_intersected[!st_geometry_type(hex_grid_intersected) %in% c("POINT", "MULTIPOINT"), ]
+```
+
+```{r, echo=FALSE, include=FALSE}
+# Add polygons to the Leaflet map
+m <- leaflet() %>%
+  setView(lng = -1.58493057219999, lat = 52.7296295707541, zoom = 17) %>%
+  addProviderTiles("Esri.WorldImagery")
+
+# Add the filtered hexagonal grid polygons to the map
+m <- m %>% addPolygons(data = st_transform(hex_grid_intersected_polygons, crs = 4326), color = "red", weight = 1, fillOpacity = 0.5)
+
+# Add interactive circle markers for each centroid of the hexagonal grid
+# Ensure you're using the centroids from the filtered polygon data
+hex_grid_centers_filtered <- st_centroid(hex_grid_intersected_polygons)
+hex_grid_centers_wgs84_filtered <- st_transform(hex_grid_centers_filtered, crs = 4326)
+coords_df_filtered <- data.frame(
+  longitude = st_coordinates(hex_grid_centers_wgs84_filtered)[, 1],
+  latitude = st_coordinates(hex_grid_centers_wgs84_filtered)[, 2]
+)
+
+m <- m %>% addCircleMarkers(
+  lng = coords_df_filtered$longitude,
+  lat = coords_df_filtered$latitude,
+  color = "blue",
+  radius = 1,
+  popup = paste("Lat:", coords_df_filtered$latitude, "<br>Lng:", coords_df_filtered$longitude)
+)
+
+# Add a scale bar to the map
+
+m <- m %>% addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE))
+
+# Add drawing and editing tools to the map
+
+m <- m %>% addDrawToolbar(
+  targetGroup = "draw",
+  editOptions = editToolbarOptions(selectedPathOptions = selectedPathOptions())
+)
+
+# Add measure tools to the map
+
+m <- m %>% addMeasure(
+  primaryLengthUnit = "meters",
+  primaryAreaUnit = "sqmeters",
+  activeColor = "#214097",
+  completedColor = "#9721f5"
+)
+```
+
+```{css, echo=FALSE}
+#leaflet-map-container {
+  width: 100%;
+  height: 750px;
+}
+```
+
+```{r, echo=FALSE}
+#| label: fig-leaflet-map
+#| layout-ncol: 1
+#| css-class: leaflet-map-container
+#| fig-cap: "An interactive map of the autonomous strip cropping trial site and adjacent conventional field. Extra polygons and measurements may be taken with the interactive tools and each blue point contains coordinates once clicked on. The red polygons represent the hexagonal grid overlay, with blue markers indicating the centroids of each hexagonal grid cell. The scale bar is located in the bottom left corner of the map, and the legend is located in the bottom right corner of the map."
+
+m
+```
