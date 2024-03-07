@@ -29,4 +29,4 @@ Current arable farming practice in England (and much of the world) is heavily re
 
 The proposed polyculture strip cropping system can alleviate all the issues associated with monocultures while decreasing fertiliser and agrochemical usage, regenerating biodiversity, regenerating our soils, and increasing yield. 
 
-[![Link to ARRevolution website](_assets/arr.png){fig-align="center"}](https://arrevolution.co.uk/)
+[![Link to ARRevolution website](assets/arr.png){fig-align="center"}](https://arrevolution.co.uk/)
